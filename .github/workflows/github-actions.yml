@@ -16,16 +16,16 @@ jobs:
       - name: Get trackers_all.txt & Update torrent_trackers_domains.txt
         run: |
           curl -fsSL -o ${{ runner.temp }}/trackers_all.txt https://raw.githubusercontent.com/ngosang/trackerslist/refs/heads/master/trackers_all.txt
-          trackers_all_b3sum=$(b3sum ${{ runner.temp }}/trackers_all.txt | awk '{print $1}')
-          echo "trackers_all_b3sum=$trackers_all_b3sum" | tee -a "$GITHUB_ENV"
-          if [[ "$trackers_all_b3sum" == $(cat trackers_all_b3sum.txt) ]]; then
+          trackers_all_sha256sum=$(sha256sum ${{ runner.temp }}/trackers_all.txt | awk '{print $1}')
+          echo "trackers_all_sha256sum=$trackers_all_sha256sum" | tee -a "$GITHUB_ENV"
+          if [[ "$trackers_all_sha256sum" == $(cat trackers_all_sha256sum.txt) ]]; then
             echo 'should_commit=false' | tee -a "$GITHUB_ENV"
             echo 'trackers_all.txt not changed; nothing to do'
             exit 0
           fi
           echo 'should_commit=true' | tee -a "$GITHUB_ENV"
           echo 'trackers_all.txt changed; will update torrent_trackers_domains.txt'
-          echo "$trackers_all_b3sum" > trackers_all_b3sum.txt
+          echo "$trackers_all_sha256sum" > trackers_all_sha256sum.txt
           # sed "/^$/d" ${{ runner.temp }}/trackers_all.txt | cut -d":" -f2 | cut -d"/" -f3
           awk -F':' 'NF {split($2, a, "/"); print a[3]}' > trackers_domains.txt
 
@@ -35,6 +35,6 @@ jobs:
         with:
           default_author: github_actions
           add: |
-            - trackers_all_b3sum.txt
+            - trackers_all_sha256sum.txt
             - torrent_trackers_domains.txt
 
