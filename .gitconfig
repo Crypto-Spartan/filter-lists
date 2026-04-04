@@ -1,0 +1,7 @@
+[user]
+    name = Crypto-Spartan
+    email = accounts@cryptospartan.net
+
+[init]
+    defaultBranch = main
+
