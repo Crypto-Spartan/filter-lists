@@ -15,9 +15,9 @@ jobs:
 
       - name: Get trackers_all.txt & Update torrent_trackers_domains.txt
         run: |
-          curl -fsSL -o ${{ runner.temp }}/trackers_all.txt https://raw.githubusercontent.com/ngosang/trackerslist/refs/heads/master/trackers_all.txt
-          trackers_all_sha256sum=$(sha256sum ${{ runner.temp }}/trackers_all.txt | awk '{print $1}')
-          echo "trackers_all_sha256sum=$trackers_all_sha256sum" | tee -a "$GITHUB_ENV"
+          url=https://raw.githubusercontent.com/ngosang/trackerslist/refs/heads/master/trackers_all.txt
+          trackers_all_sha256sum=$(curl -fsSL "$url" | tee ${{ runner.temp }}/trackers_all.txt | sha256sum | awk '{print $1}')
+          echo "trackers_all_sha256sum=$trackers_all_sha256sum"
           if [[ "$trackers_all_sha256sum" == $(cat trackers_all_sha256sum.txt) ]]; then
             echo 'should_commit=false' | tee -a "$GITHUB_ENV"
             echo 'trackers_all.txt not changed; nothing to do'
