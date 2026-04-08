@@ -26,7 +26,8 @@ jobs:
           echo 'should_commit=true' | tee -a "$GITHUB_ENV"
           echo 'block.txt changed; will update dshield_block_ips.txt'
           echo "$dshield_block_sha256sum" > dshield_block_sha256sum.txt
-          awk '{print $1; ip3o = $1; sub(/\.0$/, "", ip3o); for(i = 1; i < 255; i++){printf "%s%s%d\n", ip3o, ".", i}; print $2}' ${{ runner.temp }}/dshield_block.txt > dshield_block_ips.txt
+          echo "# data source: $url" > dshield_block_ips.txt
+          awk '{print $1; ip3o = $1; sub(/\.0$/, "", ip3o); for(i = 1; i < 255; i++){printf "%s%s%d\n", ip3o, ".", i}; print $2}' ${{ runner.temp }}/dshield_block.txt >> dshield_block_ips.txt
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v10
